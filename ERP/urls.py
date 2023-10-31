@@ -21,5 +21,8 @@ from users import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("create_user/", views.create_user, name="create_user"),
-
+    path("get_users/", views.get_users, name="get_users"),
+    path("retrieve_user/<int:pk>/", views.retrieve_user, name="retrieve_user"),
+    path("update_user/<int:pk>/", views.update_user, name="update_user"),
+    path("delete_user/<int:pk>/", views.delete_user, name="delete_user"),
 ]
