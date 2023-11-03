@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from .models import User
 from .serializers import UserSerializer
 from django.db.models import Q
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 # Create
 @api_view(['POST'])
@@ -25,11 +26,16 @@ def get_users(request):
         job = request.GET.getlist('job')
         uid = request.GET.getlist('uid')
         pk = request.GET.getlist('pk')
+
         # Créer un dictionnaire de filtres basé sur les arguments présents
         filters = {}
+
+        # Si un terme de recherche est fourni, vérifier s'il s'agit d'un email
         if search_term:
             filters['last_name__icontains'] = search_term
             filters['first_name__icontains'] = search_term
+            filters['email__icontains'] = search_term  # Ajout de la recherche par email ici
+
         if birthday:
             filters['birthday__in'] = birthday
         if job:
@@ -39,14 +45,14 @@ def get_users(request):
         if pk:
             filters['pk__in'] = pk
 
-        if search_term:
-            users = User.objects.filter(
-                Q(last_name__icontains=search_term) |
-                Q(first_name__icontains=search_term) |
-                Q(**filters)
-            )
-        else:
-            users = User.objects.filter(**filters)
+        # Combinez les filtres pour le terme de recherche et les autres filtres
+        users = User.objects.filter(
+            Q(last_name__icontains=search_term) |
+            Q(first_name__icontains=search_term) |
+            Q(email__icontains=search_term) |  # Ajout de la recherche par email ici
+            Q(**filters)
+        )
+
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -91,3 +97,44 @@ def delete_user(request, pk):
     if request.method == 'DELETE':
         user.delete()
         return Response({"message": "User deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+def login(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
+
+    user = User.objects.filter(email=email).first()
+
+    if user is None:
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    if not user.check_password(password):
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    refresh = RefreshToken.for_user(user)
+    access_token = str(refresh.access_token)
+
+    return Response({
+        'access_token': access_token,
+        'refresh_token': str(refresh)
+    }, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def refresh_token(request):
+    refresh_token = request.data.get('refresh_token')
+
+    if refresh_token is None:
+        return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Générer un nouvel accès à partir du token de rafraîchissement
+        refresh = RefreshToken(refresh_token)
+        access_token = str(refresh.access_token)
+
+        return Response({
+            'access_token': access_token
+        }, status=status.HTTP_200_OK)
+
+    except TokenError:  # à partir de rest_framework_simplejwt.exceptions
+        return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)

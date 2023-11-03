@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import models
 from datetime import datetime
 
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, birthday, password=None, **extra_fields):
         if not email:
@@ -38,8 +39,9 @@ class CustomUserManager(BaseUserManager):
 
     # TO DO : add automatisation of deactivation of expired contracts
     def deactivate_expired_contracts(self):
-        expired_users = self.filter(is_active=True,end_contract__lte=datetime.now())
+        expired_users = self.filter(is_active=True, end_contract__lte=datetime.now())
         expired_users.update(is_active=False)
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     uid = models.CharField(max_length=100, unique=True, null=True, blank=True)
@@ -68,11 +70,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         base_uid = first_initial + last_initial + birthday
 
         uid = base_uid
-        counter =0
+        counter = 0
         while User.objects.filter(uid=uid).exists():
             counter += 1
             uid = base_uid + str(counter)
         return uid
+
     def save(self, *args, **kwargs):
         if not self.uid:
             self.uid = self.generate_uid()
