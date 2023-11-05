@@ -71,15 +71,15 @@ def retrieve_user(request, pk):
 
 
 # Update
-@api_view(['PUT'])
+@api_view(['PATCH'])
 def update_user(request, pk):
     try:
         user = User.objects.get(pk=pk)
     except User.DoesNotExist:
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'PUT':
-        serializer = UserSerializer(user, data=request.data)
+    if request.method == 'PATCH':
+        serializer = UserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "User updated successfully"})
