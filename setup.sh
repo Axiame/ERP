@@ -1,4 +1,4 @@
-python -m venv venv
+python -m venv env
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     source env/bin/activate
