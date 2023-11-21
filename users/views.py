@@ -6,12 +6,12 @@ from .serializers import UserSerializer
 from django.db.models import Q
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework_swagger.views import get_swagger_view
-from django.conf.urls import url
+from django.urls import path
 
 schema_view = get_swagger_view(title='ERP API')
 
 urlpatterns = [
-    url(r'^$', schema_view),
+    path('', schema_view),
     ]
 # Create
 @api_view(['POST'])
