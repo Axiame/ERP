@@ -1,18 +1,11 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import User
-from .serializers import UserSerializer
+from ..models import User
+from ..serializers import UserSerializer, SignupSerializer
 from django.db.models import Q
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
-from rest_framework_swagger.views import get_swagger_view
-from django.urls import path
 
-schema_view = get_swagger_view(title='ERP API')
-
-urlpatterns = [
-    path('', schema_view),
-    ]
 # Create
 @api_view(['POST'])
 def create_user(request):
