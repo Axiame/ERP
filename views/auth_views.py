@@ -1,8 +1,8 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from ..models import User
-from ..serializers import UserSerializer, SignupSerializer
+from users.models import User
+from users.serializers import UserSerializer, SignupSerializer
 from django.db.models import Q
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 

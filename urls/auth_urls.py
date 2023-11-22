@@ -1,7 +1,7 @@
 # users/urls/auth_urls.py
 
 from django.urls import path
-from ..views.auth_views import create_user, get_users, retrieve_user, update_user, delete_user, login, refresh_token, signup
+from views.auth_views import create_user, get_users, retrieve_user, update_user, delete_user, login, refresh_token, signup
 
 urlpatterns = [
     path("create_user/", create_user, name="create_user"),
