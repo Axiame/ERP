@@ -22,6 +22,21 @@ def create_user(request):
             serializer.save()
             return Response({"message": "User created successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#Signup
+@api_view(['POST'])
+def signup(request):
+    """
+    Crée un nouvel utilisateur.
+    """
+    if request.method == 'POST':
+        serializer = SignupSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+
+            # Ici, vous pouvez ajouter des logiques supplémentaires comme l'envoi d'un email de confirmation
+
+            return Response({"message": "User registered successfully. Please check your email to activate your account."}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Read (Retrieve users by filter)
 @api_view(['GET'])
