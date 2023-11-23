@@ -18,4 +18,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("urls.auth_urls")),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('school/',include("urls.school_urls")),
+    path('classroom/',include("urls.classroom_urls")),
+    path('student/',include("urls.student_urls")),
+
 ]

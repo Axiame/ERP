@@ -5,6 +5,7 @@ from users.models import User
 from users.serializers import UserSerializer, SignupSerializer
 from django.db.models import Q
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from drf_yasg.utils import swagger_auto_schema
 
 # Create
 @api_view(['POST'])
@@ -17,6 +18,7 @@ def create_user(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #Signup
 @api_view(['POST'])
+@swagger_auto_schema(request_body=SignupSerializer)
 def signup(request):
     """
     Crée un nouvel utilisateur.
